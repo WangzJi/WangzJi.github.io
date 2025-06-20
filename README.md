@@ -1,5 +1,3 @@
-# Eric Wang - Developer Portfolio
-
 <div align="center">
   <h2>🚀 Cyberpunk Developer Portfolio 🚀</h2>
   <p>A futuristic, interactive personal website with matrix rain effects and cyberpunk aesthetics</p>
