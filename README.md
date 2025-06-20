@@ -1,6 +1,13 @@
+# Eric Wang - Developer Portfolio
+
 <div align="center">
   <h2>🚀 Cyberpunk Developer Portfolio 🚀</h2>
   <p>A futuristic, interactive personal website with matrix rain effects and cyberpunk aesthetics</p>
+  
+  <p>
+    <a href="README.md">English</a> | 
+    <a href="README-zh.md">中文</a>
+  </p>
   
   [![Website](https://img.shields.io/badge/website-live-00ff88?style=for-the-badge)](https://wangzji.github.io)
   [![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
@@ -48,7 +55,8 @@ wangzji.github.io/
 ├── index.html      # Main HTML structure
 ├── styles.css      # Cyberpunk styling & animations
 ├── script.js       # Interactive effects & matrix rain
-├── README.md       # Project documentation
+├── README.md       # English documentation
+├── README-zh.md    # Chinese documentation
 └── LICENSE         # MIT License
 ```
 
