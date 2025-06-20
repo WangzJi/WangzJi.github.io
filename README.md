@@ -8,7 +8,7 @@
   [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 
   [![English](https://img.shields.io/badge/English-d9d9d9?style=flat-square)](README.md)
-  [![简体中文](https://img.shields.io/badge/简体中文-d9d9d9?style=flat-square)](README.zh.md)
+  [![简体中文](https://img.shields.io/badge/简体中文-d9d9d9?style=flat-square)](README-zh.md)
 </div>
 
 ## 🌟 Features
