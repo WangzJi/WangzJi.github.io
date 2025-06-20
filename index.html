@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eric Wang - Developer</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Matrix Rain Background -->
+    <div class="matrix-rain">
+        <canvas id="matrix-canvas"></canvas>
+    </div>
+
+    <!-- Animated Background -->
+    <div class="animated-bg">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <!-- Geometric shapes -->
+        <div class="floating-shape shape-1"></div>
+        <div class="floating-shape shape-2"></div>
+        <div class="floating-shape shape-3"></div>
+        <div class="floating-shape shape-4"></div>
+        <!-- Grid overlay -->
+        <div class="grid-overlay"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="#home">
+                    <span class="logo-bracket">[</span>
+                    <span class="logo-text">ERIC</span>
+                    <span class="logo-bracket">]</span>
+                </a>
+            </div>
+            <div class="nav-toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <!-- Holographic overlay -->
+        <div class="holographic-overlay"></div>
+        
+        <!-- Scan lines effect -->
+        <div class="scan-lines"></div>
+        
+        <!-- Floating UI elements -->
+        <div class="floating-ui">
+            <div class="ui-element ui-1">
+                <div class="ui-dot"></div>
+                <div class="ui-line"></div>
+                <span class="ui-text">SYSTEM ONLINE</span>
+            </div>
+            <div class="ui-element ui-2">
+                <div class="ui-circle"></div>
+                <span class="ui-text">STATUS: ACTIVE</span>
+            </div>
+            <div class="ui-element ui-3">
+                <div class="ui-progress">
+                    <div class="ui-progress-bar"></div>
+                </div>
+                <span class="ui-text">LOADING...</span>
+            </div>
+        </div>
+
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="terminal-window">
+                    <div class="terminal-header">
+                        <div class="terminal-buttons">
+                            <span class="btn-close"></span>
+                            <span class="btn-minimize"></span>
+                            <span class="btn-maximize"></span>
+                        </div>
+                        <div class="terminal-title">
+                            terminal.app
+                            <div class="terminal-status">
+                                <span class="status-dot"></span>
+                                Connected
+                            </div>
+                        </div>
+                    </div>
+                    <div class="terminal-body">
+                        <div class="terminal-line">
+                            <span class="prompt">user@localhost:~$</span>
+                            <span class="command" id="typewriter">whoami</span>
+                            <span class="cursor">|</span>
+                        </div>
+                        <div class="terminal-output">
+                            <div class="output-line">
+                                <span class="output-prompt">></span> Eric Wang
+                            </div>
+                            <div class="output-line">
+                                <span class="output-prompt">></span> Full Stack Developer
+                            </div>
+                            <div class="output-line accent">
+                                <span class="output-prompt">></span> Building digital experiences
+                            </div>
+                            <div class="output-line stats">
+                                <span class="output-prompt">></span> 
+                                <span class="stat-item">Projects: <span class="stat-value">25+</span></span>
+                                <span class="stat-item">Experience: <span class="stat-value">10+ years</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="hero-cta">
+                    <a href="#contact" class="cta-btn">
+                        <span class="btn-text">GET IN TOUCH</span>
+                        <span class="btn-icon">
+                            <i class="fas fa-arrow-right"></i>
+                        </span>
+                        <div class="btn-particles"></div>
+                    </a>
+                    
+                    <div class="social-links">
+                        <a href="https://github.com/WangzJi" class="social-link" data-tooltip="GitHub">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="https://linkedin.com/in/yourprofile" class="social-link" data-tooltip="LinkedIn">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="mailto:your.email@example.com" class="social-link" data-tooltip="Email">
+                            <i class="fas fa-envelope"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="hero-visual">
+                <!-- 3D Code Block -->
+                <div class="code-3d-container">
+                    <div class="code-preview">
+                        <div class="code-header">
+                            <div class="file-tabs">
+                                <div class="tab active">
+                                    <i class="fab fa-js-square"></i>
+                                    portfolio.js
+                                </div>
+                                <div class="tab">
+                                    <i class="fab fa-css3-alt"></i>
+                                    styles.css
+                                </div>
+                            </div>
+                            <div class="code-actions">
+                                <div class="action-btn run-btn">
+                                    <i class="fas fa-play"></i>
+                                    Run
+                                </div>
+                            </div>
+                        </div>
+                        <div class="code-content">
+                            <div class="code-line">
+                                <span class="line-number">1</span>
+                                <span class="code-text">
+                                    <span class="keyword">const</span> 
+                                    <span class="variable">developer</span> = {
+                                </span>
+                            </div>
+                            <div class="code-line">
+                                <span class="line-number">2</span>
+                                <span class="code-text">
+                                    &nbsp;&nbsp;<span class="property">name</span>: 
+                                    <span class="string">'Eric Wang'</span>,
+                                </span>
+                            </div>
+                            <div class="code-line">
+                                <span class="line-number">3</span>
+                                <span class="code-text">
+                                    &nbsp;&nbsp;<span class="property">skills</span>: [
+                                    <span class="string">'React'</span>, 
+                                    <span class="string">'Java'</span>
+                                    <span class="string">'Go'</span>],
+                                </span>
+                            </div>
+                            <div class="code-line">
+                                <span class="line-number">4</span>
+                                <span class="code-text">
+                                    &nbsp;&nbsp;<span class="property">passion</span>: 
+                                    <span class="string">'Creating magic'</span>
+                                </span>
+                            </div>
+                            <div class="code-line">
+                                <span class="line-number">5</span>
+                                <span class="code-text">
+                                    &nbsp;&nbsp;<span class="method">code</span>() {
+                                </span>
+                            </div>
+                            <div class="code-line">
+                                <span class="line-number">6</span>
+                                <span class="code-text">
+                                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> 
+                                    <span class="string">'Amazing projects'</span>;
+                                </span>
+                            </div>
+                            <div class="code-line">
+                                <span class="line-number">7</span>
+                                <span class="code-text">
+                                    &nbsp;&nbsp;}
+                                </span>
+                            </div>
+                            <div class="code-line">
+                                <span class="line-number">8</span>
+                                <span class="code-text">};</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Code execution output -->
+                        <div class="code-output">
+                            <div class="output-header">
+                                <span class="output-title">Console Output</span>
+                                <div class="output-controls">
+                                    <span class="output-control"></span>
+                                    <span class="output-control"></span>
+                                    <span class="output-control"></span>
+                                </div>
+                            </div>
+                            <div class="output-content">
+                                <div class="console-line">
+                                    <span class="console-prompt">></span>
+                                    <span class="console-text">developer.code()</span>
+                                </div>
+                                <div class="console-line">
+                                    <span class="console-output">"Amazing projects"</span>
+                                </div>
+                                <div class="console-line success">
+                                    <span class="console-prompt">✓</span>
+                                    <span class="console-text">Execution completed successfully</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Floating data visualization -->
+                <div class="data-viz">
+                    <div class="viz-circle"></div>
+                    <div class="viz-bars">
+                        <div class="viz-bar" style="--height: 70%"></div>
+                        <div class="viz-bar" style="--height: 85%"></div>
+                        <div class="viz-bar" style="--height: 60%"></div>
+                        <div class="viz-bar" style="--height: 90%"></div>
+                        <div class="viz-bar" style="--height: 75%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scroll indicator -->
+        <div class="scroll-indicator">
+            <div class="scroll-text">SCROLL TO EXPLORE</div>
+            <div class="scroll-arrow">
+                <i class="fas fa-chevron-down"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="skills-section">
+        <div class="container">
+            <h2 class="section-title">
+                <span class="title-bracket">&lt;</span>
+                SKILLS
+                <span class="title-bracket">/&gt;</span>
+            </h2>
+            <div class="skills-grid">
+                <div class="skill-card" data-skill="frontend">
+                    <div class="skill-icon">
+                        <i class="fab fa-react"></i>
+                    </div>
+                    <h3>Frontend</h3>
+                    <div class="skill-tags">
+                        <span>React</span>
+                        <span>Vue</span>
+                        <span>TypeScript</span>
+                    </div>
+                </div>
+                
+                <div class="skill-card" data-skill="backend">
+                    <div class="skill-icon">
+                        <i class="fas fa-server"></i>
+                    </div>
+                    <h3>Backend</h3>
+                    <div class="skill-tags">
+                        <span>Node.js</span>
+                        <span>Python</span>
+                        <span>Database</span>
+                    </div>
+                </div>
+                
+                <div class="skill-card" data-skill="tools">
+                    <div class="skill-icon">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <h3>Tools</h3>
+                    <div class="skill-tags">
+                        <span>Git</span>
+                        <span>Docker</span>
+                        <span>AWS</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="projects-section">
+        <div class="container">
+            <h2 class="section-title">
+                <span class="title-bracket">&lt;</span>
+                PROJECTS
+                <span class="title-bracket">/&gt;</span>
+            </h2>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-number">01</div>
+                    <div class="project-content">
+                        <h3>E-Commerce Platform</h3>
+                        <p>Modern React-based shopping platform with real-time features</p>
+                        <div class="project-tech">
+                            <span>React</span>
+                            <span>Node.js</span>
+                            <span>MongoDB</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="#" class="project-link">
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-number">02</div>
+                    <div class="project-content">
+                        <h3>AI Chat Application</h3>
+                        <p>Real-time chat app with AI integration and modern UI</p>
+                        <div class="project-tech">
+                            <span>Vue.js</span>
+                            <span>WebSocket</span>
+                            <span>OpenAI</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="#" class="project-link">
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-number">03</div>
+                    <div class="project-content">
+                        <h3>Analytics Dashboard</h3>
+                        <p>Data visualization dashboard with interactive charts</p>
+                        <div class="project-tech">
+                            <span>React</span>
+                            <span>D3.js</span>
+                            <span>Express</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="#" class="project-link">
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <div class="contact-content">
+                <h2 class="contact-title">Let's Create Something Amazing</h2>
+                <p class="contact-subtitle">Ready to bring your ideas to life</p>
+                
+                <div class="contact-grid">
+                    <a href="mailto:iwongjian666@gmail.com" class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-text">
+                            <span class="contact-label">Email</span>
+                            <span class="contact-value">iwongjian666@example.com</span>
+                        </div>
+                    </a>
+                    
+                    <a href="https://github.com/WangzJi" class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fab fa-github"></i>
+                        </div>
+                        <div class="contact-text">
+                            <span class="contact-label">GitHub</span>
+                            <span class="contact-value">@WangzJi</span>
+                        </div>
+                    </a>
+                    
+                    <!-- <a href="https://linkedin.com/in/yourprofile" class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fab fa-linkedin"></i>
+                        </div>
+                        <div class="contact-text">
+                            <span class="contact-label">LinkedIn</span>
+                            <span class="contact-value">Eric Wang</span>
+                        </div>
+                    </a> -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2025 Eric Wang. Crafted with <i class="fas fa-heart"></i></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html> 
