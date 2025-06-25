@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="post-title">Blog Post - Eric Wang</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="blog.css">
+    <link rel="stylesheet" href="post.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Marked.js for professional Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+    
+    <!-- Highlight.js for syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    
+    <!-- Mermaid for diagrams -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    
+    <!-- DOMPurify for XSS protection -->
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.7/dist/purify.min.js"></script>
+</head>
+<body>
+    <!-- Matrix Rain Background -->
+    <div class="matrix-rain">
+        <canvas id="matrix-canvas"></canvas>
+    </div>
+
+    <!-- Animated Background -->
+    <div class="animated-bg">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <!-- Geometric shapes -->
+        <div class="floating-shape shape-1"></div>
+        <div class="floating-shape shape-2"></div>
+        <div class="floating-shape shape-3"></div>
+        <div class="floating-shape shape-4"></div>
+        <!-- Grid overlay -->
+        <div class="grid-overlay"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html">
+                    <span class="logo-bracket">[</span>
+                    <span class="logo-text">ERIC</span>
+                    <span class="logo-bracket">]</span>
+                </a>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="index.html#skills" class="nav-link">Skills</a>
+                <a href="index.html#projects" class="nav-link">Projects</a>
+                <a href="blog.html" class="nav-link">Blog</a>
+                <a href="index.html#contact" class="nav-link">Contact</a>
+            </div>
+            <div class="nav-toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Back to Blog Button -->
+    <div class="back-to-blog">
+        <a href="blog.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            <span>返回博客列表</span>
+        </a>
+    </div>
+
+    <!-- Article Container -->
+    <main class="article-container">
+        <article class="post-article" id="post-content">
+            <!-- Post content will be dynamically loaded here -->
+            <div class="post-loading">
+                <div class="loading-terminal">
+                    <div class="terminal-header">
+                        <div class="terminal-buttons">
+                            <span class="btn-close"></span>
+                            <span class="btn-minimize"></span>
+                            <span class="btn-maximize"></span>
+                        </div>
+                        <div class="terminal-title">loading_post.sh</div>
+                    </div>
+                    <div class="terminal-body">
+                        <div class="loading-line">
+                            <span class="prompt">blog@server:~$</span>
+                            <span class="command">cat posts/post_${id}.md</span>
+                        </div>
+                        <div class="loading-spinner">
+                            <div class="spinner-dots">
+                                <span class="dot"></span>
+                                <span class="dot"></span>
+                                <span class="dot"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Table of Contents -->
+        <aside class="toc-container" id="toc">
+            <div class="toc-header">
+                <h3>
+                    <i class="fas fa-list"></i>
+                    目录
+                </h3>
+            </div>
+            <nav class="toc-nav" id="toc-nav">
+                <!-- Table of contents will be generated here -->
+            </nav>
+        </aside>
+
+        <!-- Related Posts -->
+        <section class="related-posts" id="related-posts">
+            <h3 class="related-title">
+                <span class="title-bracket">&lt;</span>
+                相关文章
+                <span class="title-bracket">/&gt;</span>
+            </h3>
+            <div class="related-grid" id="related-grid">
+                <!-- Related posts will be loaded here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Comments Section -->
+    <section class="comments-section">
+        <div class="container">
+            <h3 class="comments-title">
+                <span class="title-bracket">&lt;</span>
+                讨论区
+                <span class="title-bracket">/&gt;</span>
+            </h3>
+            <div class="comments-placeholder">
+                <div class="terminal-comment">
+                    <div class="terminal-header">
+                        <div class="terminal-buttons">
+                            <span class="btn-close"></span>
+                            <span class="btn-minimize"></span>
+                            <span class="btn-maximize"></span>
+                        </div>
+                        <div class="terminal-title">comments.js</div>
+                    </div>
+                    <div class="terminal-body">
+                        <div class="comment-line">
+                            <span class="prompt">// TODO:</span>
+                            <span class="comment">集成评论系统 (如 Disqus, GitTalk 等)</span>
+                        </div>
+                        <div class="comment-line">
+                            <span class="prompt">// Email:</span>
+                            <span class="comment">iwongjian666@gmail.com</span>
+                        </div>
+                        <div class="comment-line">
+                            <span class="prompt">// GitHub:</span>
+                            <span class="comment">https://github.com/WangzJi</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2025 Eric Wang. Crafted with <i class="fas fa-heart"></i></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="blog.js"></script>
+    <script src="post.js"></script>
+</body>
+</html> 

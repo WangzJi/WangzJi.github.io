@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - Eric Wang</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="blog.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Marked.js for Markdown parsing (if needed) -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+</head>
+<body>
+    <!-- Matrix Rain Background -->
+    <div class="matrix-rain">
+        <canvas id="matrix-canvas"></canvas>
+    </div>
+
+    <!-- Animated Background -->
+    <div class="animated-bg">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <!-- Geometric shapes -->
+        <div class="floating-shape shape-1"></div>
+        <div class="floating-shape shape-2"></div>
+        <div class="floating-shape shape-3"></div>
+        <div class="floating-shape shape-4"></div>
+        <!-- Grid overlay -->
+        <div class="grid-overlay"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html">
+                    <span class="logo-bracket">[</span>
+                    <span class="logo-text">ERIC</span>
+                    <span class="logo-bracket">]</span>
+                </a>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="index.html#skills" class="nav-link">Skills</a>
+                <a href="index.html#projects" class="nav-link">Projects</a>
+                <a href="blog.html" class="nav-link active">Blog</a>
+                <a href="index.html#contact" class="nav-link">Contact</a>
+            </div>
+            <div class="nav-toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Blog Header -->
+    <section class="blog-header">
+        <div class="container">
+            <div class="blog-title-wrapper">
+                <h1 class="blog-title">
+                    <span class="title-bracket">&lt;</span>
+                    TECH BLOG
+                    <span class="title-bracket">/&gt;</span>
+                </h1>
+                <p class="blog-subtitle">分享技术探索与实践经验 | Sharing Tech Insights & Experiences</p>
+                
+                <!-- Terminal style search -->
+                <div class="blog-search">
+                    <div class="search-terminal">
+                        <div class="terminal-header">
+                            <div class="terminal-buttons">
+                                <span class="btn-close"></span>
+                                <span class="btn-minimize"></span>
+                                <span class="btn-maximize"></span>
+                            </div>
+                            <div class="terminal-title">search.sh</div>
+                        </div>
+                        <div class="search-body">
+                            <div class="search-line">
+                                <span class="search-prompt">blog@search:~$</span>
+                                <input type="text" id="blog-search" placeholder="grep -r 'keyword' ./posts/*" class="search-input">
+                                <span class="search-cursor">|</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Categories -->
+    <section class="blog-categories">
+        <div class="container">
+            <div class="category-tabs">
+                <button class="category-tab active" data-category="all">
+                    <i class="fas fa-code"></i> All Posts
+                </button>
+                <button class="category-tab" data-category="frontend">
+                    <i class="fab fa-react"></i> Frontend
+                </button>
+                <button class="category-tab" data-category="backend">
+                    <i class="fas fa-server"></i> Backend
+                </button>
+                <button class="category-tab" data-category="devops">
+                    <i class="fas fa-cogs"></i> DevOps
+                </button>
+                <button class="category-tab" data-category="ai">
+                    <i class="fas fa-robot"></i> AI/ML
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Posts -->
+    <section class="blog-posts">
+        <div class="container">
+            <div class="posts-grid" id="posts-grid">
+                <!-- Blog posts will be dynamically loaded here -->
+            </div>
+            
+            <!-- Load More Button -->
+            <div class="load-more-container">
+                <button class="load-more-btn" id="load-more">
+                    <span class="btn-text">LOAD MORE POSTS</span>
+                    <span class="btn-icon">
+                        <i class="fas fa-chevron-down"></i>
+                    </span>
+                    <div class="btn-particles"></div>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2025 Eric Wang. Crafted with <i class="fas fa-heart"></i></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="blog.js"></script>
+</body>
+</html> 

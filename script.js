@@ -676,17 +676,34 @@ function initScrollAnimations() {
 }
 
 // Mobile Navigation
-function initMobileNav() {
-    const mobileMenuBtn = document.getElementById('mobile-menu');
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenu = document.getElementById('mobile-menu');
     const navMenu = document.querySelector('.nav-menu');
     
-    if (mobileMenuBtn && navMenu) {
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenuBtn.classList.toggle('is-active');
+    if (mobileMenu && navMenu) {
+        mobileMenu.addEventListener('click', function() {
+            mobileMenu.classList.toggle('active');
             navMenu.classList.toggle('active');
         });
+
+        // Close mobile menu when clicking on a link
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!navMenu.contains(event.target) && !mobileMenu.contains(event.target)) {
+                mobileMenu.classList.remove('active');
+                navMenu.classList.remove('active');
+            }
+        });
     }
-}
+});
 
 // Progress Bar Animation
 function animateProgressBars() {
@@ -824,7 +841,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize other features
     initSmoothScrolling();
     initScrollAnimations();
-    initMobileNav();
     initCodePreview();
     initTerminalSimulation();
     initParallax();
