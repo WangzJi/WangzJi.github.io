@@ -1,88 +1,10 @@
-// Blog Data - 在实际项目中，这些数据应该来自后端 API 或 CMS
-const blogPosts = [
-    {
-        id: 7,
-        title: "深入解析Seata TM模块：分布式事务管理器的设计与实现",
-        excerpt: "深入分析Seata框架中TM（Transaction Manager）模块的架构设计、核心实现和扩展机制，探讨分布式事务管理的最佳实践。",
-        content: "深入分析Seata框架中TM模块的完整实现...",
-        category: "backend",
-        tags: ["Seata", "分布式事务", "微服务", "Java"],
-        date: "2024-01-20",
-        readTime: "25 min read",
-        author: "Eric Wang"
-    },
-    {
-        id: 1,
-        title: "React 18 新特性详解：并发渲染与自动批处理",
-        excerpt: "深入探讨 React 18 中的并发特性、Suspense 改进以及自动批处理机制，如何提升应用性能和用户体验。",
-        content: "React 18 引入了许多激动人心的新特性...",
-        category: "frontend",
-        tags: ["React", "JavaScript", "Performance"],
-        date: "2024-01-15",
-        readTime: "8 min read",
-        author: "Eric Wang"
-    },
-    {
-        id: 2,
-        title: "Go 微服务架构实践：从设计到部署",
-        excerpt: "分享使用 Go 语言构建微服务架构的完整实践，包括服务发现、负载均衡、监控告警等关键技术。",
-        content: "在现代软件开发中，微服务架构已经成为...",
-        category: "backend",
-        tags: ["Go", "Microservices", "Architecture"],
-        date: "2024-01-12",
-        readTime: "12 min read",
-        author: "Eric Wang"
-    },
-    {
-        id: 3,
-        title: "Kubernetes 生产环境最佳实践",
-        excerpt: "总结在生产环境中使用 Kubernetes 的最佳实践，包括资源管理、安全配置、监控和故障排除。",
-        content: "Kubernetes 作为容器编排的事实标准...",
-        category: "devops",
-        tags: ["Kubernetes", "DevOps", "Production"],
-        date: "2024-01-10",
-        readTime: "10 min read",
-        author: "Eric Wang"
-    },
-    {
-        id: 4,
-        title: "深度学习模型在前端的实际应用",
-        excerpt: "探索如何在浏览器中运行深度学习模型，使用 TensorFlow.js 构建智能前端应用的实践经验。",
-        content: "随着 WebAssembly 和 TensorFlow.js 的发展...",
-        category: "ai",
-        tags: ["TensorFlow.js", "Machine Learning", "Frontend"],
-        date: "2024-01-08",
-        readTime: "15 min read",
-        author: "Eric Wang"
-    },
-    {
-        id: 5,
-        title: "Vue 3 Composition API 实战指南",
-        excerpt: "详细介绍 Vue 3 Composition API 的使用方法，以及如何在大型项目中合理组织代码结构。",
-        content: "Vue 3 的 Composition API 为我们提供了...",
-        category: "frontend",
-        tags: ["Vue", "Composition API", "JavaScript"],
-        date: "2024-01-05",
-        readTime: "6 min read",
-        author: "Eric Wang"
-    },
-    {
-        id: 6,
-        title: "Docker 容器化应用的性能优化策略",
-        excerpt: "分享 Docker 容器在生产环境中的性能优化经验，包括镜像优化、资源限制和监控策略。",
-        content: "Docker 容器化技术在现代应用部署中...",
-        category: "devops",
-        tags: ["Docker", "Performance", "Optimization"],
-        date: "2024-01-03",
-        readTime: "9 min read",
-        author: "Eric Wang"
-    }
-];
+
 
 // Blog Management Class
 class BlogManager {
-    constructor() {
-        this.posts = blogPosts;
+    constructor(dataService) {
+        this.dataService = dataService;
+        this.posts = [];
         this.currentCategory = 'all';
         this.searchTerm = '';
         this.postsPerPage = 6;
@@ -90,7 +12,8 @@ class BlogManager {
         this.init();
     }
 
-    init() {
+    async init() {
+        this.posts = await this.dataService.fetchPosts();
         this.renderPosts();
         this.initSearch();
         this.initCategoryFilter();
@@ -289,7 +212,7 @@ document.head.appendChild(rippleStyle);
 
 // Initialize Blog Manager when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    const blogManager = new BlogManager();
+    const blogManager = new BlogManager(dataService);
     
     // Add ripple effects to buttons
     const buttons = document.querySelectorAll('.category-tab, .load-more-btn');
@@ -298,5 +221,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Export for use in other files
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { BlogManager, blogPosts };
+    module.exports = { BlogManager };
 } 

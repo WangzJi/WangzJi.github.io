@@ -1,4 +1,86 @@
-# 深入解析Seata TM模块：分布式事务管理器的设计与实现
+
+// dataService.js
+
+class DataService {
+    constructor() {
+        this.posts = [];
+    }
+
+    async fetchPosts() {
+        if (this.posts.length > 0) {
+            return this.posts;
+        }
+
+        try {
+            const response = await fetch('posts.json');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            this.posts = await response.json();
+            return this.posts;
+        } catch (error) {
+            console.error('Failed to fetch posts:', error);
+            return [];
+        }
+    }
+
+    async getPostById(id) {
+        const posts = await this.fetchPosts();
+        const postInfo = posts.find(p => p.id == id);
+
+        if (!postInfo) {
+            return null;
+        }
+
+        try {
+            let content;
+            if (postInfo.file) {
+                const response = await fetch(postInfo.file);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                content = await response.text();
+            } else if (postInfo.id === 7) { // Fallback for Seata article
+                content = await this.getSeataArticleContent();
+            } else {
+                content = postInfo.content || '';
+            }
+            return { ...postInfo, content };
+        } catch (error) {
+            console.error(`Failed to fetch post content for id ${id}:`, error);
+            return null;
+        }
+    }
+
+    async getSeataArticleContent() {
+        try {
+            console.log('Attempting to load Seata markdown file...');
+            const response = await fetch('posts/seata-tm-module-complete-analysis.md');
+            
+            if (!response.ok) {
+                console.warn(`Failed to load Seata markdown file: ${response.status} ${response.statusText}`);
+                return this.getFallbackSeataContent();
+            }
+            
+            const content = await response.text();
+            console.log('Successfully loaded Seata article content, length:', content.length);
+            
+            if (!content || content.trim().length === 0) {
+                console.warn('Loaded content is empty, using fallback');
+                return this.getFallbackSeataContent();
+            }
+            
+            return content;
+            
+        } catch (error) {
+            console.error('Error loading Seata markdown file:', error);
+            return this.getFallbackSeataContent();
+        }
+    }
+
+    getFallbackSeataContent() {
+        // 如果无法加载markdown文件，使用简化版本的内容
+        return `# 深入解析Seata TM模块：分布式事务管理器的设计与实现
 
 ## 前言
 
@@ -10,7 +92,7 @@ TM（Transaction Manager）是Seata框架中的事务管理器，负责全局事
 
 ### TM的核心职责
 
-- **事务边界定义**：通过`@GlobalTransactional`注解标识全局事务范围
+- **事务边界定义**：通过\`@GlobalTransactional\`注解标识全局事务范围
 - **事务生命周期管理**：控制全局事务的开始、提交、回滚
 - **与TC通信**：向事务协调器(TC)发送事务指令
 - **事务传播控制**：处理嵌套事务和事务传播行为
@@ -19,7 +101,8 @@ TM（Transaction Manager）是Seata框架中的事务管理器，负责全局事
 ## TM模块架构解析
 
 ### 核心组件结构
-```
+
+\`\`\`
 tm/
 ├── TMClient.java                     # TM客户端初始化入口
 ├── DefaultTransactionManager.java    # TM核心实现，与TC通信
@@ -36,109 +119,27 @@ tm/
         ├── Propagation.java              # 事务传播行为
         ├── TransactionHook.java          # 事务生命周期Hook
         └── TransactionHookManager.java   # Hook管理器
-```
-
-### 整体架构图
-
-下图展示了TM模块在整个Seata架构中的位置和交互关系：
-
-```mermaid
-graph TB
-    subgraph "业务应用"
-        A["@GlobalTransactional<br/>业务方法"] --> B["AOP代理拦截"]
-        B --> C["TransactionalTemplate"]
-    end
-    
-    subgraph "TM模块核心组件"
-        C --> D["GlobalTransaction"]
-        D --> E["DefaultTransactionManager"]
-        C --> F["TransactionHookManager"]
-    end
-    
-    subgraph "TC服务器"
-        G["Transaction Coordinator"]
-        H["全局事务状态管理"]
-        I["分支事务协调"]
-    end
-    
-    subgraph "RM资源管理器"
-        J["数据库连接池"]
-        K["消息队列"]
-        L["其他资源"]
-    end
-    
-    E -->|"GlobalBeginRequest<br/>GlobalCommitRequest<br/>GlobalRollbackRequest"| G
-    G -->|"响应事务状态"| E
-    
-    G --> H
-    G --> I
-    
-    I -->|"BranchCommitRequest<br/>BranchRollbackRequest"| J
-    I -->|"BranchCommitRequest<br/>BranchRollbackRequest"| K
-    I -->|"BranchCommitRequest<br/>BranchRollbackRequest"| L
-    
-    F -->|"beforeBegin()<br/>afterCommit()<br/>afterCompletion()"| M["TransactionHook实现"]
-```
+\`\`\`
 
 ### 关键设计模式
 
 TM模块巧妙运用了多种设计模式：
 
-1. **代理模式（Proxy Pattern）**：通过AOP代理拦截`@GlobalTransactional`方法
-2. **模板方法模式（Template Method）**：`TransactionalTemplate`定义事务处理流程
+1. **代理模式（Proxy Pattern）**：通过AOP代理拦截\`@GlobalTransactional\`方法
+2. **模板方法模式（Template Method）**：\`TransactionalTemplate\`定义事务处理流程
 3. **策略模式（Strategy Pattern）**：支持多种事务传播行为
-4. **单例模式（Singleton）**：`TransactionManagerHolder`确保TM实例唯一性
+4. **单例模式（Singleton）**：\`TransactionManagerHolder\`确保TM实例唯一性
 5. **观察者模式（Observer）**：通过Hook机制监听事务生命周期事件
 
 ## 核心实现深度剖析
 
 ### 1. 全局事务的生命周期
 
-下图展示了完整的全局事务执行流程：
+让我们通过源码分析一个完整的全局事务执行流程：
 
-```mermaid
-graph TD
-    A["@GlobalTransactional方法调用"] --> B["AOP拦截器"]
-    B --> C["TransactionalTemplate.execute()"]
-    C --> D["获取事务信息TransactionInfo"]
-    D --> E["创建/获取GlobalTransaction"]
-    E --> F["判断事务传播行为"]
-    
-    F --> G["REQUIRED: 加入现有事务或创建新事务"]
-    F --> H["REQUIRES_NEW: 挂起当前事务,创建新事务"]
-    F --> I["SUPPORTS: 有事务则加入,无事务则继续"]
-    F --> J["NOT_SUPPORTED: 挂起事务,非事务执行"]
-    
-    G --> K["beginTransaction()"]
-    H --> K
-    I --> K
-    J --> L["business.execute()"]
-    
-    K --> M["triggerBeforeBegin()"]
-    M --> N["tx.begin() - 向TC发送GlobalBeginRequest"]
-    N --> O["triggerAfterBegin()"]
-    O --> L
-    
-    L --> P["业务方法执行成功?"]
-    P -->|是| Q["commitTransaction()"]
-    P -->|否| R["completeTransactionAfterThrowing()"]
-    
-    Q --> S["triggerBeforeCommit()"]
-    S --> T["tx.commit() - 向TC发送GlobalCommitRequest"]
-    T --> U["triggerAfterCommit()"]
-    
-    R --> V["triggerBeforeRollback()"]
-    V --> W["tx.rollback() - 向TC发送GlobalRollbackRequest"]
-    W --> X["triggerAfterRollback()"]
-    
-    U --> Y["triggerAfterCompletion()"]
-    X --> Y
-    Y --> Z["清理资源 cleanUp()"]
-    Z --> AA["TransactionHookManager.clear()"]
-```
+#### 事务开始阶段
 
-让我们通过源码分析一个完整的全局事务执行流程：#### 事务开始阶段
-```java
+\`\`\`java
 // DefaultGlobalTransaction.java
 @Override
 public void begin(int timeout, String name) throws TransactionException {
@@ -166,10 +167,11 @@ public void begin(int timeout, String name) throws TransactionException {
         LOGGER.info("Begin new global transaction [{}]", xid);
     }
 }
-```
+\`\`\`
 
 #### 事务提交阶段
-```java
+
+\`\`\`java
 // DefaultGlobalTransaction.java
 @Override
 public void commit() throws TransactionException {
@@ -208,83 +210,13 @@ public void commit() throws TransactionException {
         LOGGER.info("[{}] commit status: {}", xid, status);
     }
 }
-```
+\`\`\`
 
 ### 2. TransactionalTemplate：事务处理的核心模板
 
-下图展示了事务执行的详细时序图：
+\`TransactionalTemplate\`是TM模块最核心的类，它实现了完整的分布式事务处理逻辑：
 
-```mermaid
-sequenceDiagram
-    participant App as 业务应用
-    participant AOP as AOP代理
-    participant TT as TransactionalTemplate
-    participant GT as GlobalTransaction
-    participant TM as TransactionManager
-    participant TC as Transaction Coordinator
-    participant Hook as TransactionHook
-    
-    App->>+AOP: @GlobalTransactional方法调用
-    AOP->>+TT: execute(TransactionalExecutor)
-    
-    TT->>+GT: getCurrentOrCreate()
-    GT-->>-TT: GlobalTransaction实例
-    
-    TT->>+Hook: triggerBeforeBegin()
-    Hook-->>-TT: Hook执行完成
-    
-    TT->>+GT: begin(timeout, name)
-    GT->>+TM: begin(appId, group, name, timeout)
-    TM->>+TC: GlobalBeginRequest
-    TC-->>-TM: GlobalBeginResponse(xid)
-    TM-->>-GT: xid
-    GT-->>-TT: 事务开始成功
-    
-    TT->>+Hook: triggerAfterBegin()
-    Hook-->>-TT: Hook执行完成
-    
-    TT->>+App: business.execute()
-    App-->>-TT: 业务执行结果
-    
-    alt 业务执行成功
-        TT->>+Hook: triggerBeforeCommit()
-        Hook-->>-TT: Hook执行完成
-        
-        TT->>+GT: commit()
-        GT->>+TM: commit(xid)
-        TM->>+TC: GlobalCommitRequest
-        TC-->>-TM: GlobalCommitResponse
-        TM-->>-GT: GlobalStatus.Committed
-        GT-->>-TT: 提交成功
-        
-        TT->>+Hook: triggerAfterCommit()
-        Hook-->>-TT: Hook执行完成
-    else 业务执行失败
-        TT->>+Hook: triggerBeforeRollback()
-        Hook-->>-TT: Hook执行完成
-        
-        TT->>+GT: rollback()
-        GT->>+TM: rollback(xid)
-        TM->>+TC: GlobalRollbackRequest
-        TC-->>-TM: GlobalRollbackResponse
-        TM-->>-GT: GlobalStatus.Rollbacked
-        GT-->>-TT: 回滚成功
-        
-        TT->>+Hook: triggerAfterRollback()
-        Hook-->>-TT: Hook执行完成
-    end
-    
-    TT->>+Hook: triggerAfterCompletion()
-    Hook-->>-TT: Hook执行完成
-    
-    TT->>TT: cleanUp() & clear hooks
-    TT-->>-AOP: 执行结果
-    AOP-->>-App: 返回结果
-```
-
-`TransactionalTemplate`是TM模块最核心的类，它实现了完整的分布式事务处理逻辑：
-
-```java
+\`\`\`java
 public Object execute(TransactionalExecutor business) throws Throwable {
     // 1. 获取事务信息
     TransactionInfo txInfo = business.getTransactionInfo();
@@ -348,52 +280,13 @@ public Object execute(TransactionalExecutor business) throws Throwable {
         }
     }
 }
-```
+\`\`\`
 
 ### 3. 事务传播机制
 
-下图展示了不同传播行为的处理流程：
+Seata支持多种事务传播行为，与Spring事务保持一致：
 
-```mermaid
-graph LR
-    subgraph "事务传播行为处理流程"
-        A["方法调用"] --> B["检查当前事务"]
-        B --> C{"当前是否存在事务?"}
-        
-        C -->|是| D["REQUIRED: 加入当前事务"]
-        C -->|是| E["REQUIRES_NEW: 挂起当前事务<br/>创建新事务"]
-        C -->|是| F["SUPPORTS: 加入当前事务"]
-        C -->|是| G["MANDATORY: 加入当前事务"]
-        C -->|是| H["NOT_SUPPORTED: 挂起当前事务<br/>非事务执行"]
-        C -->|是| I["NEVER: 抛出异常"]
-        
-        C -->|否| J["REQUIRED: 创建新事务"]
-        C -->|否| K["REQUIRES_NEW: 创建新事务"]
-        C -->|否| L["SUPPORTS: 非事务执行"]
-        C -->|否| M["MANDATORY: 抛出异常"]
-        C -->|否| N["NOT_SUPPORTED: 非事务执行"]
-        C -->|否| O["NEVER: 非事务执行"]
-        
-        D --> P["执行业务逻辑"]
-        E --> P
-        F --> P
-        G --> P
-        J --> P
-        K --> P
-        
-        H --> Q["非事务执行业务逻辑"]
-        L --> Q
-        N --> Q
-        O --> Q
-        
-        I --> R["抛出TransactionException"]
-        M --> R
-    end
-```
-
-Seata支持多种事务传播行为，与Spring事务保���一致：
-
-```java
+\`\`\`java
 public enum Propagation {
     REQUIRED(0),        // 当前有事务就加入，没有就创建新事务
     SUPPORTS(1),        // 当前有事务就加入，没有就以非事务方式执行
@@ -403,7 +296,7 @@ public enum Propagation {
     NEVER(5),          // 不能在事务中执行，有事务就抛异常
     NESTED(6);         // 嵌套事务（当前版本暂不支持）
 }
-```
+\`\`\`
 
 ## Hook机制：优雅的扩展点设计
 
@@ -411,7 +304,7 @@ public enum Propagation {
 
 Seata提供了Hook机制，允许开发者在事务的关键节点插入自定义逻辑：
 
-```java
+\`\`\`java
 public interface TransactionHook {
     void beforeBegin();      // 事务开始前
     void afterBegin();       // 事务开始后
@@ -421,54 +314,11 @@ public interface TransactionHook {
     void afterRollback();    // 事务回滚后
     void afterCompletion();  // 事务完成后（无论成功失败）
 }
-```
+\`\`\`
 
 ### Hook管理机制
 
-下图展示了Hook的完整生命周期管理：
-
-```mermaid
-graph TD
-    subgraph "Hook生命周期管理"
-        A["应用启动"] --> B["Hook注册阶段"]
-        B --> C["TransactionHookManager.registerHook()"]
-        C --> D["Hook存储到ThreadLocal"]
-        
-        D --> E["事务开始"]
-        E --> F["triggerBeforeBegin()"]
-        F --> G["遍历执行所有Hook.beforeBegin()"]
-        
-        G --> H["事务执行中"]
-        H --> I["triggerAfterBegin()"]
-        I --> J["遍历执行所有Hook.afterBegin()"]
-        
-        J --> K["业务逻辑执行"]
-        K --> L{"业务执行结果"}
-        
-        L -->|成功| M["triggerBeforeCommit()"]
-        L -->|失败| N["triggerBeforeRollback()"]
-        
-        M --> O["执行Hook.beforeCommit()"]
-        N --> P["执行Hook.beforeRollback()"]
-        
-        O --> Q["事务提交"]
-        P --> R["事务回滚"]
-        
-        Q --> S["triggerAfterCommit()"]
-        R --> T["triggerAfterRollback()"]
-        
-        S --> U["执行Hook.afterCommit()"]
-        T --> V["执行Hook.afterRollback()"]
-        
-        U --> W["triggerAfterCompletion()"]
-        V --> W
-        W --> X["执行Hook.afterCompletion()"]
-        X --> Y["TransactionHookManager.clear()"]
-        Y --> Z["清理ThreadLocal中的Hook"]
-    end
-```
-
-```java
+\`\`\`java
 public final class TransactionHookManager {
     // 使用ThreadLocal确保线程安全
     private static final ThreadLocal<List<TransactionHook>> LOCAL_HOOKS = new ThreadLocal<>();
@@ -488,9 +338,11 @@ public final class TransactionHookManager {
         LOCAL_HOOKS.remove(); // 事务完成后自动清理
     }
 }
-```### Hook实际应用示例
+\`\`\`
 
-```java
+### Hook实际应用示例
+
+\`\`\`java
 // 示例1：事务性能监控Hook
 public class TransactionPerformanceHook implements TransactionHook {
     private long startTime;
@@ -547,15 +399,15 @@ public void businessMethod() {
     
     // 业务逻辑...
 }
-```
+\`\`\`
 
 ## 与TC的通信机制
 
 ### DefaultTransactionManager实现
 
-TM通过`DefaultTransactionManager`与TC进行通信：
+TM通过\`DefaultTransactionManager\`与TC进行通信：
 
-```java
+\`\`\`java
 public class DefaultTransactionManager implements TransactionManager {
     
     @Override
@@ -591,13 +443,13 @@ public class DefaultTransactionManager implements TransactionManager {
         return response.getGlobalStatus();
     }
 }
-```
+\`\`\`
 
 ## 最佳实践与注意事项
 
 ### 1. 正确使用@GlobalTransactional注解
 
-```java
+\`\`\`java
 // ✅ 正确用法：在业务入口方法上使用
 @GlobalTransactional(name = "createOrder", rollbackFor = Exception.class)
 public void createOrder(OrderRequest request) {
@@ -612,11 +464,11 @@ public void createOrder(OrderRequest request) {
 public void createOrder(OrderRequest request) {
     // 业务逻辑
 }
-```
+\`\`\`
 
 ### 2. 合理使用事务传播行为
 
-```java
+\`\`\`java
 // 场景1：记录审计日志，不影响主业务事务
 @GlobalTransactional(propagation = Propagation.REQUIRES_NEW)
 public void auditLog(String operation) {
@@ -629,11 +481,11 @@ public List<Order> queryOrders(String userId) {
     // 如果在事务中就加入，否则非事务执行
     return orderMapper.selectByUserId(userId);
 }
-```
+\`\`\`
 
 ### 3. 异常处理和回滚规则
 
-```java
+\`\`\`java
 @GlobalTransactional(
     rollbackFor = {BusinessException.class, RuntimeException.class},
     noRollbackFor = {ValidationException.class}
@@ -647,108 +499,13 @@ public void processOrder(OrderRequest request) {
         throw new ServiceException("Invalid order data", e);
     }
 }
-```
-
-### 4. Hook的使用建议
-
-```java
-// ✅ 推荐：创建通用的Hook基类
-public abstract class BaseTransactionHook implements TransactionHook {
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
-    
-    @Override
-    public void beforeBegin() {
-        // 默认实现
-    }
-    
-    @Override
-    public void afterCompletion() {
-        // 通用清理逻辑
-        cleanupResources();
-    }
-    
-    protected abstract void cleanupResources();
-}
-
-// 业务特定的Hook实现
-public class OrderTransactionHook extends BaseTransactionHook {
-    @Override
-    public void beforeCommit() {
-        // 发送订单创建事件
-        eventPublisher.publishOrderCreated();
-    }
-    
-    @Override
-    protected void cleanupResources() {
-        // 清理订单相关资源
-    }
-}
-```
-
-## 性能优化建议
-
-### 1. 减少不必要的事务
-
-```java
-// ❌ 避免：只读操作使用全局事务
-@GlobalTransactional
-public List<Order> getAllOrders() {
-    return orderService.findAll(); // 纯查询操作
-}
-
-// ✅ 推荐：只读操作不使用事务
-public List<Order> getAllOrders() {
-    return orderService.findAll();
-}
-```
-
-### 2. 优化事务边界
-
-```java
-// ❌ 避免：事务边界过大
-@GlobalTransactional
-public void processLargeDataSet() {
-    for (int i = 0; i < 10000; i++) {
-        processRecord(i); // 处理大量数据
-    }
-}
-
-// ✅ 推荐：适当的事务边界
-public void processLargeDataSet() {
-    List<DataBatch> batches = splitIntoBatches(data);
-    for (DataBatch batch : batches) {
-        processBatch(batch); // 分批处理
-    }
-}
-
-@GlobalTransactional
-private void processBatch(DataBatch batch) {
-    // 处理单个批次
-}
-```
-
-### 3. Hook性能考虑
-
-```java
-// ✅ 推荐：异步处理耗时操作
-public class AsyncNotificationHook implements TransactionHook {
-    private final ExecutorService executor = Executors.newFixedThreadPool(4);
-    
-    @Override
-    public void afterCommit() {
-        // 异步发送通知，不阻塞事务完成
-        executor.submit(() -> {
-            notificationService.sendSuccessNotification();
-        });
-    }
-}
-```
+\`\`\`
 
 ## 实际应用场景分析
 
 ### 场景1：电商订单处理
 
-```java
+\`\`\`java
 @Service
 public class OrderService {
     
@@ -782,165 +539,7 @@ public class OrderService {
         }
     }
 }
-
-// 订单性能监控Hook
-public class OrderPerformanceHook implements TransactionHook {
-    private final String orderId;
-    private long startTime;
-    
-    public OrderPerformanceHook(String orderId) {
-        this.orderId = orderId;
-    }
-    
-    @Override
-    public void beforeBegin() {
-        startTime = System.currentTimeMillis();
-        MDC.put("orderId", orderId);
-    }
-    
-    @Override
-    public void afterCommit() {
-        long duration = System.currentTimeMillis() - startTime;
-        OrderMetrics.recordOrderCreationTime(duration);
-        LOGGER.info("Order {} created successfully in {}ms", orderId, duration);
-    }
-    
-    @Override
-    public void afterRollback() {
-        LOGGER.warn("Order {} creation failed", orderId);
-        OrderMetrics.incrementFailureCount();
-    }
-    
-    @Override
-    public void afterCompletion() {
-        MDC.remove("orderId");
-    }
-}
-```
-
-### 场景2：批量数据处理
-
-```java
-@Service
-public class DataMigrationService {
-    
-    public void migrateUserData(List<User> users) {
-        int batchSize = 100;
-        List<List<User>> batches = Lists.partition(users, batchSize);
-        
-        for (List<User> batch : batches) {
-            try {
-                migrateBatch(batch);
-            } catch (Exception e) {
-                LOGGER.error("Failed to migrate batch, continuing with next batch", e);
-                // 单个批次失败不影响其他批次
-            }
-        }
-    }
-    
-    @GlobalTransactional(propagation = Propagation.REQUIRES_NEW)
-    private void migrateBatch(List<User> batch) {
-        // 注册批处理监控Hook
-        TransactionHookManager.registerHook(new BatchProcessingHook(batch.size()));
-        
-        for (User user : batch) {
-            // 数据迁移逻辑
-            migrateUserAccount(user);
-            migrateUserProfile(user);
-            migrateUserPreferences(user);
-        }
-    }
-}
-```
-
-## 监控与调试
-
-### 1. 事务监控Hook实现
-
-```java
-@Component
-public class TransactionMonitoringHook implements TransactionHook {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TransactionMonitoringHook.class);
-    
-    @Autowired
-    private MeterRegistry meterRegistry;
-    
-    private Timer.Sample timerSample;
-    
-    @Override
-    public void beforeBegin() {
-        timerSample = Timer.start(meterRegistry);
-        Counter.builder("seata.transaction.begin")
-                .tag("application", getApplicationName())
-                .register(meterRegistry)
-                .increment();
-    }
-    
-    @Override
-    public void afterCommit() {
-        timerSample.stop(Timer.builder("seata.transaction.duration")
-                .tag("status", "committed")
-                .register(meterRegistry));
-                
-        Counter.builder("seata.transaction.commit")
-                .tag("application", getApplicationName())
-                .register(meterRegistry)
-                .increment();
-    }
-    
-    @Override
-    public void afterRollback() {
-        timerSample.stop(Timer.builder("seata.transaction.duration")
-                .tag("status", "rollbacked")
-                .register(meterRegistry));
-                
-        Counter.builder("seata.transaction.rollback")
-                .tag("application", getApplicationName())
-                .register(meterRegistry)
-                .increment();
-    }
-}
-```
-
-### 2. 事务调试工具
-
-```java
-@Component
-public class TransactionDebugHook implements TransactionHook {
-    
-    @Override
-    public void beforeBegin() {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("=== Global Transaction BEGIN ===");
-            LOGGER.debug("Thread: {}", Thread.currentThread().getName());
-            LOGGER.debug("Stack trace: ", new Exception("Transaction begin point"));
-        }
-    }
-    
-    @Override
-    public void afterBegin() {
-        if (LOGGER.isDebugEnabled()) {
-            String xid = RootContext.getXID();
-            LOGGER.debug("Global transaction started: {}", xid);
-        }
-    }
-    
-    @Override
-    public void beforeCommit() {
-        if (LOGGER.isDebugEnabled()) {
-            String xid = RootContext.getXID();
-            LOGGER.debug("Preparing to commit transaction: {}", xid);
-        }
-    }
-    
-    @Override
-    public void afterCompletion() {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("=== Global Transaction END ===");
-        }
-    }
-}
-```
+\`\`\`
 
 ## 总结
 
@@ -952,15 +551,34 @@ Seata的TM模块通过精心设计的架构和巧妙的实现，为开发者提�
 4. **完善的异常处理**：支持细粒度的回滚控制
 5. **高性能设计**：通过合理的架构设计保证性能
 
-### 关键技术亮点
-
-- **流程图清晰展示**：通过多个Mermaid流程图直观展示了事务执行流程、架构关系和Hook生命周期
-- **源码深度解析**：详细分析了核心类的实现逻辑和设计思想
-- **实际应用指导**：提供了丰富的最佳实践和性能优化建议
-- **监控调试支持**：展示了如何通过Hook机制实现事务监控和调试
-
 理解TM模块的设计思想和实现细节，不仅有助于更好地使用Seata，也为我们设计分布式系统提供了宝贵的经验。在实际应用中，合理使用事务边界、正确配置传播行为、恰当利用Hook机制，能够帮助我们构建更加稳定和高效的微服务应用。
 
 ---
 
-*本文基于Seata最新版本分析，详细源码可参考[Apache Seata](https://github.com/apache/incubator-seata)官方仓库。*
+*本文基于Seata最新版本分析，详细源码可参考[Apache Seata](https://github.com/apache/incubator-seata)官方仓库。*`;
+    }
+
+    async getRelatedPosts(currentPost) {
+        const allPosts = await this.fetchPosts();
+        const related = allPosts
+            .filter(post => 
+                post.id !== currentPost.id && 
+                (post.category === currentPost.category || 
+                 post.tags.some(tag => currentPost.tags.includes(tag)))
+            )
+            .slice(0, 3);
+
+        if (related.length > 0) {
+            return related;
+        } else {
+            // Fallback to latest posts if no related posts found
+            return allPosts
+                .filter(post => post.id !== currentPost.id)
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .slice(0, 3);
+        }
+    }
+}
+
+// Export a single instance
+const dataService = new DataService();
